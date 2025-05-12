@@ -1,0 +1,221 @@
+﻿@{
+    ViewData["Title"] = "Welcome to SpendSmart";
+}
+
+@* Font Awesome Link (ensure it's active in _Layout or here) *@
+@* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" /> *@
+
+<style>
+    /* Pink (#E83E8C), Black (#000000, #1a1a1a, #2b2b2b), Teal (#08FDD8) Theme */
+    :root {
+        --primary-pink: #E83E8C;
+        --accent-teal: #08FDD8; /* Vibrant Cyan/Teal */
+        --background-dark: #1a1a1a;
+        --container-dark: #2b2b2b;
+        --background-black: #000000;
+        --text-light: #f0f0f0;
+        --text-muted-dark: #aaa;
+        --border-dark: #444;
+    }
+
+    body {
+        background-color: var(--background-dark);
+        color: var(--text-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .hero-section {
+        background: var(--background-black); /* Pure black */
+        color: white;
+        padding: 4rem 1rem;
+        text-align: center;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        /* Teal border and glow */
+        border: 1px solid var(--accent-teal);
+        box-shadow: 0 0 20px rgba(8, 253, 216, 0.25);
+    }
+
+        .hero-section h1 {
+            font-weight: 700;
+            font-size: 2.8rem;
+            /* Pink heading */
+            color: var(--primary-pink);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .hero-section p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            color: #d0d0d0;
+        }
+
+    .features {
+        margin-top: 3rem;
+    }
+
+    .feature-card {
+        background-color: var(--container-dark);
+        border: 1px solid var(--border-dark);
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--text-light);
+    }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            /* Teal glow/border on hover */
+            box-shadow: 0 6px 16px rgba(8, 253, 216, 0.2);
+            border-color: var(--accent-teal);
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            /* Pink icons */
+            color: var(--primary-pink);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: #b0b0b0;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+
+    .info-section {
+        background-color: var(--container-dark);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-top: 3rem;
+        text-align: center;
+        border: 1px solid var(--border-dark);
+    }
+
+        .info-section h4 {
+            /* Pink heading */
+            color: var(--primary-pink);
+            margin-bottom: 1rem;
+        }
+
+        .info-section .stat {
+            font-size: 1.4rem;
+            font-weight: 600;
+            /* Teal for stats */
+            color: var(--accent-teal);
+        }
+
+    /* --- Button Styles --- */
+    .btn {
+        padding: 0.7rem 1.6rem; /* Slightly larger padding */
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600; /* Bolder font */
+        transition: all 0.2s ease-in-out;
+        border: 2px solid transparent; /* Thicker border base */
+        cursor: pointer;
+        text-transform: uppercase; /* Uppercase text */
+        letter-spacing: 0.5px;
+    }
+
+        .btn:hover {
+            transform: translateY(-3px); /* More hover lift */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+    /* Pink Button (Primary Actions like View Overview) */
+    .btn-primary {
+        background-color: var(--primary-pink);
+        border-color: var(--primary-pink);
+        color: #ffffff !important;
+    }
+
+        .btn-primary:hover {
+            background-color: #c71d71; /* Darker pink */
+            border-color: #c71d71;
+            color: #ffffff !important;
+        }
+
+    /* Teal Button (Secondary Actions like Create New) - Use btn-info semantic name */
+    .btn-info {
+        background-color: var(--accent-teal);
+        border-color: var(--accent-teal);
+        color: #000000 !important; /* Black text on teal for contrast */
+    }
+
+        .btn-info:hover {
+            background-color: #00e0b8; /* Slightly adjusted teal on hover */
+            border-color: #00e0b8;
+            color: #000000 !important;
+        }
+
+    .shadow-sm { /* Keep a subtle shadow */
+        box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .2) !important;
+    }
+
+</style>
+
+<div class="container mt-4">
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="display-4 fw-bold">SpendSmart</h1>
+        <p class="lead">Your personal expense tracking companion.</p>
+        <p>Manage your finances efficiently in style.</p>
+    </div>
+
+    <!-- Quick Stats Section -->
+    @if (ViewBag.ExpenseCount > 0)
+    {
+        <div class="info-section">
+            <h4>Quick Overview</h4>
+            <p>
+                You have recorded <span class="stat">@ViewBag.ExpenseCount</span> expenses totalling <span class="stat">@($"{ViewBag.TotalExpenses:C}")</span>.
+            </p>
+        </div>
+    }
+
+    <!-- Features / Actions Section -->
+    <div class="features row text-center g-4">
+
+        <div class="col-md-6">
+            <div class="feature-card">
+                <i class="fas fa-plus-circle"></i> @* Assumes Font Awesome *@
+                <h3>Add New Expense</h3>
+                <p>Quickly record a new spending transaction.</p>
+                @* Teal button for Create New *@
+                <a asp-controller="Home" asp-action="CreateEditExpense" class="btn btn-lg btn-info shadow-sm">
+                    Create New
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="feature-card">
+                <i class="fas fa-chart-pie"></i> @* Assumes Font Awesome *@
+                <h3>View Expenses</h3>
+                <p>See a detailed list of all your recorded expenses.</p>
+                @* Pink button for View Overview *@
+                <a asp-controller="Home" asp-action="Expenses" class="btn btn-lg btn-primary shadow-sm">
+                    View Overview
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>

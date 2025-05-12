@@ -1,0 +1,203 @@
+﻿@model SpendSmartCREWAI.Models.Expense
+
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create Expense" : "Edit Expense";
+}
+
+<style>
+    /* Pink (#E83E8C), Black (#000000, #1a1a1a, #2b2b2b), Teal (#08FDD8) Theme */
+    :root {
+        --primary-pink: #E83E8C;
+        --accent-teal: #08FDD8;
+        --background-dark: #1a1a1a;
+        --container-dark: #2b2b2b;
+        --input-background: #333333;
+        --text-light: #f0f0f0;
+        --text-label: #d0d0d0;
+        --text-muted-dark: #aaa;
+        --border-dark: #444;
+        --border-input: #555;
+        --danger-color: #f89090; /* Validation error color */
+    }
+
+    body {
+        background-color: var(--background-dark);
+        color: var(--text-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: var(--container-dark);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-dark);
+        color: var(--text-light);
+    }
+
+        .form-container h1 {
+            color: var(--primary-pink); /* Pink heading */
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-container p.text-muted {
+            color: var(--text-muted-dark);
+            text-align: center;
+        }
+
+        .form-container hr {
+            border-color: var(--border-input); /* Use input border color */
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-label);
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        background-color: var(--input-background);
+        border: 1px solid var(--border-input);
+        color: var(--text-light);
+        padding: 0.6rem 0.85rem; /* Adjusted padding */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .form-control::placeholder {
+            color: #888;
+        }
+
+        .form-control:focus {
+            /* Teal border/glow on focus */
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 0 0.2rem rgba(8, 253, 216, 0.2);
+            background-color: #404040;
+            color: #ffffff;
+            outline: none; /* Remove default outline */
+        }
+
+    /* Date Display */
+    .date-display {
+        padding: 0.6rem 0.85rem; /* Match input padding */
+        background-color: var(--input-background);
+        border: 1px solid var(--border-input);
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        color: #b0b0b0;
+        cursor: default;
+    }
+
+    /* Validation Styles */
+    .validation-summary-errors ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .validation-summary-errors li,
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
+
+    /* --- Button Styles --- */
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+    }
+
+        .button-group .btn {
+            padding: 10px 25px;
+            font-weight: 600;
+            border-width: 2px;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .button-group .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            }
+
+        /* Save Button (Pink) */
+        .button-group .btn-primary {
+            background-color: var(--primary-pink);
+            border-color: var(--primary-pink);
+            color: white;
+        }
+
+            .button-group .btn-primary:hover {
+                background-color: #c71d71;
+                border-color: #c71d71;
+            }
+
+        /* Cancel Button (Grey Outline) */
+        .button-group .btn-outline-secondary {
+            border-color: #888;
+            color: #ccc;
+            background-color: transparent;
+        }
+
+            .button-group .btn-outline-secondary:hover {
+                background-color: #444;
+                color: #fff;
+                border-color: #555;
+            }
+
+</style>
+
+<div class="form-container">
+    <h1>@ViewData["Title"]</h1>
+    <p class="text-muted">Fill in the details below.</p>
+    <hr />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 validation-summary-errors"></div>
+
+    <form asp-action="CreateEditExpenseForm" asp-controller="Home" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Value" class="form-label fw-bold"></label>
+            <input asp-for="Value" class="form-control" type="number" placeholder="e.g., 45.50" step="0.01" />
+            <span asp-validation-for="Value" class="field-validation-error"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label fw-bold"></label>
+            <input asp-for="Description" class="form-control" type="text" placeholder="e.g., Coffee with friend" />
+            <span asp-validation-for="Description" class="field-validation-error"></span>
+        </div>
+
+        @if (Model.Id != 0)
+        {
+            <div class="mb-3">
+                <label asp-for="CreatedDate" class="form-label fw-bold"></label>
+                <div class="date-display">@Model.CreatedDate.ToString("yyyy-MM-dd")</div>
+            </div>
+        }
+
+        <div class="button-group">
+            @* Pink Save button *@
+            <button class="btn btn-primary px-4" type="submit">Save</button>
+            @* Grey outline Cancel button *@
+            <a asp-action="Expenses" class="btn btn-outline-secondary px-4">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

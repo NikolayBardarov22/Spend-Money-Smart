@@ -1,0 +1,298 @@
+﻿@model IEnumerable<SpendSmartCREWAI.Models.Expense>
+@using SpendSmartCREWAI.Models
+
+@{
+    ViewData["Title"] = "Expenses Overview";
+}
+
+<style>
+    /* Pink (#E83E8C), Black (#000000, #1a1a1a, #2b2b2b), Teal (#08FDD8) Theme */
+    :root {
+        --primary-pink: #E83E8C;
+        --accent-teal: #08FDD8;
+        --background-dark: #1a1a1a;
+        --container-dark: #2b2b2b;
+        --container-medium-dark: #333333;
+        --text-light: #f0f0f0;
+        --text-muted-dark: #aaa;
+        --border-dark: #444;
+        --border-medium-dark: #4d4d4d;
+        --danger-color: #f17881; /* For delete */
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background-dark);
+        color: var(--text-light);
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: var(--container-dark);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-dark);
+    }
+
+    h1, h3, h4 {
+        color: var(--primary-pink); /* Pink headings */
+    }
+
+    .total-expenses {
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: #ffffff;
+        margin-bottom: 1rem;
+    }
+
+        .total-expenses .currency-value {
+            color: var(--primary-pink); /* Pink for the value */
+            font-weight: 600;
+        }
+
+    .top-expenses-list {
+        list-style: none;
+        padding: 15px;
+        margin-top: 10px;
+        margin-bottom: 25px;
+        /* Teal border */
+        border: 2px solid var(--accent-teal);
+        background-color: var(--container-medium-dark);
+        border-radius: 5px;
+        box-shadow: inset 0 0 10px rgba(8, 253, 216, 0.1);
+    }
+
+        .top-expenses-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-medium-dark);
+            color: #d0d0d0;
+        }
+
+            .top-expenses-list li:last-child {
+                border-bottom: none;
+            }
+
+        .top-expenses-list .currency-value {
+            color: var(--primary-pink);
+            font-weight: 500;
+        }
+
+        .top-expenses-list .date {
+            font-size: 0.85em;
+            color: #999;
+            margin-left: 10px;
+        }
+
+    /* --- Table Styles --- */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+        .table th, .table td {
+            border: 1px solid var(--border-medium-dark);
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+            color: var(--text-light);
+        }
+
+        .table thead th { /* Use thead specific selector */
+            background-color: #000000; /* Black header */
+            /* Teal header text */
+            color: var(--accent-teal);
+            font-weight: 600;
+            text-transform: uppercase; /* Uppercase header */
+        }
+
+        .table tbody tr {
+            background-color: var(--container-dark);
+        }
+
+            .table tbody tr:nth-child(odd) {
+                background-color: var(--container-medium-dark);
+            }
+
+            .table tbody tr:hover {
+                background-color: #404040;
+                color: #ffffff;
+            }
+
+        .table .currency-value {
+            font-weight: 500;
+            color: var(--primary-pink);
+        }
+    /* Pink value */
+    .description-cell {
+        max-width: 300px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    /* --- Action Button Styles (in table) --- */
+    .actions a.btn {
+        margin-right: 5px;
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-width: 1px; /* Thinner border for small buttons */
+        font-weight: 500;
+        text-transform: none; /* Normal case for table buttons */
+    }
+
+    /* Teal Outline Button (Edit) - Use btn-outline-info */
+    .btn-outline-info {
+        color: var(--accent-teal) !important;
+        border-color: var(--accent-teal);
+        background-color: transparent;
+    }
+
+        .btn-outline-info:hover {
+            background-color: var(--accent-teal);
+            color: #000000 !important; /* Black text on hover */
+            border-color: var(--accent-teal);
+        }
+
+    /* Danger Outline Button (Delete) */
+    .btn-outline-danger {
+        color: var(--danger-color) !important;
+        border-color: var(--danger-color);
+        background-color: transparent;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger-color);
+            color: #000000 !important;
+            border-color: var(--danger-color);
+        }
+
+    /* --- Bottom Button Group --- */
+    .button-group {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+        .button-group .btn {
+            padding: 10px 20px;
+            font-weight: 600;
+            border-width: 2px;
+            text-transform: uppercase;
+        }
+
+            .button-group .btn:hover {
+                transform: translateY(-3px);
+            }
+
+        /* Teal Button (Create New) */
+        .button-group .btn-info {
+            background-color: var(--accent-teal);
+            border-color: var(--accent-teal);
+            color: #000000 !important;
+        }
+
+            .button-group .btn-info:hover {
+                background-color: #00e0b8;
+                border-color: #00e0b8;
+                color: #000000 !important;
+            }
+
+        /* Dark Grey Button (Back) */
+        .button-group .btn-secondary {
+            background-color: #444;
+            border-color: #555;
+            color: #f0f0f0 !important;
+        }
+
+            .button-group .btn-secondary:hover {
+                background-color: #555;
+                border-color: #666;
+            }
+
+</style>
+
+<div class="container">
+    <div class="text-center">
+        <h1 class="display-4">Expenses Overview</h1>
+        <hr style="border-color: var(--border-dark);" />
+        <h3 class="total-expenses">Total expenses: <span class="currency-value">@($"{ViewBag.Expenses:C}")</span></h3>
+
+        @* Display Top Expenses *@
+        @if (ViewBag.TopExpenses != null)
+        {
+            var topExpensesList = (List<Expense>)ViewBag.TopExpenses;
+            if (topExpensesList.Any())
+            {
+                <h4 style="margin-top: 20px;">Top @topExpensesList.Count() Highest Expenses:</h4>
+                <ul class="top-expenses-list">
+                    @foreach (var topExpense in topExpensesList)
+                    {
+                        <li>
+                            <span class="currency-value">@($"{topExpense.Value:C}")</span> - @($"{topExpense.Description}")
+                            <span class="date">(Added: @topExpense.CreatedDate.ToString("yyyy-MM-dd"))</span>
+                        </li>
+                    }
+                </ul>
+            }
+            else if (!Model.Any())
+            {
+                <p style="margin-top: 20px; color: var(--text-muted-dark);">No expenses recorded yet.</p>
+            }
+        }
+        <br />
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        @* Removed thead-dark class, using specific CSS selector now *@
+                        <tr>
+                            <th>Id</th>
+                            <th>Value</th>
+                            <th class="description-cell">Description</th>
+                            <th>Date Added</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var expense in Model)
+                        {
+                            <tr>
+                                <td>@expense.Id</td>
+                                <td class="currency-value">@($"{expense.Value:C}")</td>
+                                <td class="description-cell">@expense.Description</td>
+                                <td>@expense.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                <td class="actions text-center">
+                                    @* Teal outline for Edit *@
+                                    <a asp-action="CreateEditExpense" asp-route-id="@expense.Id" class="btn btn-sm btn-outline-info">Edit</a>
+                                    @* Danger outline for Delete *@
+                                    <a asp-action="DeleteExpense" asp-route-id="@expense.Id" class="btn btn-sm btn-outline-danger delete-link" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="button-group">
+            @* Teal button for Create New *@
+            <a asp-controller="Home" asp-action="CreateEditExpense" class="btn btn-info">Create New Expense</a>
+            @* Dark grey for Back *@
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
