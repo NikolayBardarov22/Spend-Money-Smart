@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SpendSmartCREWAI.Models;
 using Microsoft.EntityFrameworkCore;
-using System; // Required for DateTime
+using System; 
 
 namespace SpendSmartCREWAI.Controllers
 {
@@ -20,7 +20,7 @@ namespace SpendSmartCREWAI.Controllers
 
         public IActionResult Index()
         {
-            // Prepare some data for the improved Index page (optional)
+           
             ViewBag.TotalExpenses = _context.Expenses.Sum(e => (decimal?)e.Value) ?? 0m;
             ViewBag.ExpenseCount = _context.Expenses.Count();
             return View();
@@ -29,7 +29,7 @@ namespace SpendSmartCREWAI.Controllers
         public IActionResult Expenses()
         {
             var allExpenses = _context.Expenses
-                                      .OrderByDescending(e => e.CreatedDate) // Order by date by default
+                                      .OrderByDescending(e => e.CreatedDate) 
                                       .ToList();
 
             var totalExpenses = allExpenses.Sum(x => x.Value);
@@ -44,30 +44,24 @@ namespace SpendSmartCREWAI.Controllers
             return View(allExpenses);
         }
 
-        // --- GET Action for Create/Edit Form ---
         public IActionResult CreateEditExpense(int? id)
         {
-            if (id != null) // EDIT Case
+            if (id != null) 
             {
                 var expenseInDb = _context.Expenses.SingleOrDefault(expense => expense.Id == id);
                 if (expenseInDb == null)
                 {
-                    return NotFound(); // Not found page if ID doesn't exist
+                    return NotFound(); 
                 }
-                // Pass the found expense to the view for editing
+              
                 return View(expenseInDb);
             }
-            else // CREATE Case (id is null)
+            else
             {
-                // *** ENSURE THIS LINE IS PRESENT AND CORRECT ***
-                // Pass a new (non-null) Expense object to the view
-                // This prevents the NullReferenceException in the view
                 return View(new Expense());
             }
         }
 
-
-        // --- POST Action for Saving Form Data ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateEditExpenseForm(Expense model)
@@ -75,7 +69,7 @@ namespace SpendSmartCREWAI.Controllers
             if (model.Id == 0) // Creating a new expense
             {
                 model.CreatedDate = DateTime.UtcNow;
-                if (string.IsNullOrWhiteSpace(model.Description)) // Example server-side check
+                if (string.IsNullOrWhiteSpace(model.Description))
                 {
                     ModelState.AddModelError(nameof(model.Description), "Description cannot be empty.");
                 }
@@ -94,14 +88,12 @@ namespace SpendSmartCREWAI.Controllers
                 }
                 else
                 {
-                    // Handle case where expense wasn't found (should ideally not happen if ID is set)
                     ModelState.AddModelError("", "Could not find original expense data. Update failed.");
-                    // Return the view with the model to show error
-                    return View("CreateEditExpense", model); // Return the same view on error
+                  
+                    return View("CreateEditExpense", model); 
                 }
             }
 
-            // Re-check model state AFTER potentially adding errors or modifying model
             if (ModelState.IsValid)
             {
                 if (model.Id == 0)
@@ -113,11 +105,10 @@ namespace SpendSmartCREWAI.Controllers
                     _context.Expenses.Update(model);
                 }
                 _context.SaveChanges();
-                return RedirectToAction("Expenses"); // Redirect after successful save/update
+                return RedirectToAction("Expenses"); 
             }
 
-            // If model state is invalid, return the view with the current model
-            // This ensures validation errors are shown and user doesn't lose input
+           
             return View("CreateEditExpense", model);
         }
 
